@@ -1,26 +1,52 @@
 import pygame
 import sys
+import random
 
 # Initialize pygame
 pygame.init()
 
-# Set screen dimensions
-WIDTH, HEIGHT = 500, 500
+# Set screen dimensions and layout
+WIDTH, HEIGHT = 500, 600  # Extra height for the button area
 GRID_SIZE = 10
 CELL_SIZE = WIDTH // GRID_SIZE
 
 # Set up display
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Pac-Man Grid")
+pygame.display.set_caption("Neighborhood Cleanup")
 
 # Colors
 WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
 GRAY = (200, 200, 200)
-YELLOW = (255, 255, 0)  # Character color
+GREEN = (0, 255, 0)  # Trash color
+YELLOW = (255, 255, 0)  # Garbage truck color
+RED = (255, 0, 0)  # House color
+BLUE = (0, 0, 255)  # Button color
+BLACK = (0, 0, 0)  # Text color
 
-# Starting position of the character
-char_x, char_y = 0, 0  # Top-left corner of the grid
+# Function to reset the game for the same map
+def reset_game():
+    global truck_x, truck_y, score, trash_positions
+    truck_x, truck_y = 0, 0  # Reset truck position
+    score = 0  # Reset score
+    trash_positions = original_trash_positions.copy()  # Restore original trash positions
+
+# Function to generate a new map
+def new_game():
+    global truck_x, truck_y, score, trash_positions, house_positions, original_trash_positions
+    truck_x, truck_y = 0, 0  # Reset truck position
+    score = 0  # Reset score
+    # Generate new random trash positions
+    trash_positions = [(random.randint(0, GRID_SIZE - 1), random.randint(0, GRID_SIZE - 1)) for _ in range(15)]
+    original_trash_positions = trash_positions.copy()
+    # Generate new random house positions
+    house_positions = [(random.randint(0, GRID_SIZE - 1), random.randint(0, GRID_SIZE - 1)) for _ in range(10)]
+
+# Initial trash and house positions (fixed for competition)
+trash_positions = [(random.randint(0, GRID_SIZE - 1), random.randint(0, GRID_SIZE - 1)) for _ in range(15)]
+original_trash_positions = trash_positions.copy()  # Save the original trash layout for resetting
+house_positions = [(random.randint(0, GRID_SIZE - 1), random.randint(0, GRID_SIZE - 1)) for _ in range(10)]  # Initial house locations
+score = 0  # Initialize score
+truck_x, truck_y = 0, 0  # Truck's starting position
 
 # Game loop
 while True:
@@ -29,16 +55,37 @@ while True:
             pygame.quit()
             sys.exit()
 
-        # Move the character based on arrow key presses
+        # Move the truck based on arrow keys
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP and char_y > 0:  # Move up
-                char_y -= 1
-            if event.key == pygame.K_DOWN and char_y < GRID_SIZE - 1:  # Move down
-                char_y += 1
-            if event.key == pygame.K_LEFT and char_x > 0:  # Move left
-                char_x -= 1
-            if event.key == pygame.K_RIGHT and char_x < GRID_SIZE - 1:  # Move right
-                char_x += 1
+            new_x, new_y = truck_x, truck_y
+            if event.key == pygame.K_UP and truck_y > 0:
+                new_y -= 1
+            if event.key == pygame.K_DOWN and truck_y < GRID_SIZE - 1:
+                new_y += 1
+            if event.key == pygame.K_LEFT and truck_x > 0:
+                new_x -= 1
+            if event.key == pygame.K_RIGHT and truck_x < GRID_SIZE - 1:
+                new_x += 1
+
+            # Check if new position is impassable (house)
+            if (new_x, new_y) not in house_positions:
+                truck_x, truck_y = new_x, new_y
+                score -= 1  # Lose 1 point for emissions
+
+        # Handle mouse clicks for buttons
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_x, mouse_y = event.pos
+            # Check "New Game" button
+            if 50 <= mouse_x <= 200 and HEIGHT - 80 <= mouse_y <= HEIGHT - 40:
+                new_game()
+            # Check "Play Again" button
+            if 300 <= mouse_x <= 450 and HEIGHT - 80 <= mouse_y <= HEIGHT - 40:
+                reset_game()
+
+    # Check for trash collection
+    if (truck_x, truck_y) in trash_positions:
+        trash_positions.remove((truck_x, truck_y))
+        score += 2  # Gain 2 points for picking up trash
 
     # Fill screen with white
     screen.fill(WHITE)
@@ -49,9 +96,36 @@ while True:
             rect = pygame.Rect(col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE)
             pygame.draw.rect(screen, GRAY, rect, 1)
 
-    # Draw the character
-    character = pygame.Rect(char_x * CELL_SIZE, char_y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
-    pygame.draw.rect(screen, YELLOW, character)
+    # Draw trash
+    for tx, ty in trash_positions:
+        trash = pygame.Rect(tx * CELL_SIZE + CELL_SIZE // 4, ty * CELL_SIZE + CELL_SIZE // 4,
+                            CELL_SIZE // 2, CELL_SIZE // 2)
+        pygame.draw.rect(screen, GREEN, trash)
+
+    # Draw houses
+    for hx, hy in house_positions:
+        house = pygame.Rect(hx * CELL_SIZE, hy * CELL_SIZE, CELL_SIZE, CELL_SIZE)
+        pygame.draw.rect(screen, RED, house)
+
+    # Draw the garbage truck
+    truck = pygame.Rect(truck_x * CELL_SIZE, truck_y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
+    pygame.draw.rect(screen, YELLOW, truck)
+
+    # Draw buttons
+    # "New Game" button
+    pygame.draw.rect(screen, BLUE, (50, HEIGHT - 80, 150, 40))
+    font = pygame.font.Font(None, 30)
+    new_game_text = font.render("New Game", True, BLACK)
+    screen.blit(new_game_text, (75, HEIGHT - 70))
+
+    # "Play Again" button
+    pygame.draw.rect(screen, BLUE, (300, HEIGHT - 80, 150, 40))
+    play_again_text = font.render("Play Again", True, BLACK)
+    screen.blit(play_again_text, (325, HEIGHT - 70))
+
+    # Display the score
+    score_text = font.render(f"Score: {score}", True, BLACK)
+    screen.blit(score_text, (10, 10))
 
     # Update display
     pygame.display.flip()
