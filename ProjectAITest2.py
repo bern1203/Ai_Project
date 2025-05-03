@@ -34,7 +34,7 @@ BLACK = (0, 0, 0)  # Text color
 
 # Load truck image and resize it
 truck_image = pygame.image.load("truck.png")
-truck_image = pygame.transform.scale(truck_image, (CELL_SIZE, CELL_SIZE))
+truck_image = pygame.transform.scale(truck_image, (CELL_SIZE*2, CELL_SIZE))
 # Function to rotate truck image based on direction
 def rotate_truck(direction):
     if direction == "UP":
@@ -51,7 +51,7 @@ trash_image = pygame.transform.scale(trash_image, (CELL_SIZE, CELL_SIZE))
 
 # Function to reset the game for the same map
 def reset_game():
-    global truck_x, truck_y, score, trash_positions
+    global truck_x, truck_y, score, trash_positions, truck_direction
     truck_x, truck_y = 0, 0  # Reset truck position
     truck_direction = "RIGHT"  # Reset truck direction
     score = 0  # Reset score
@@ -59,7 +59,7 @@ def reset_game():
 
 # Function to generate a new map
 def new_game():
-    global truck_x, truck_y, score, trash_positions, house_positions, original_trash_positions
+    global truck_x, truck_y, score, trash_positions, house_positions, original_trash_positions, truck_direction
     truck_x, truck_y = 0, 0  # Reset truck position
     truck_direction = "RIGHT"  # Reset truck direction
     score = 0  # Reset score
