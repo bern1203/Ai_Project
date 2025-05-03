@@ -34,7 +34,7 @@ BLACK = (0, 0, 0)  # Text color
 
 # Load truck image and resize it
 truck_image = pygame.image.load("truck.png")
-truck_image = pygame.transform.scale(truck_image, (CELL_SIZE*2, CELL_SIZE))
+truck_image = pygame.transform.scale(truck_image, (CELL_SIZE, CELL_SIZE//2))
 # Function to rotate truck image based on direction
 def rotate_truck(direction):
     if direction == "UP":
