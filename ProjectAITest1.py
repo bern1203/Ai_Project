@@ -1,57 +1,64 @@
 import pygame
 import sys
-
-# Initialize pygame
-pygame.init()
+import random
 
 # Set screen dimensions
-WIDTH, HEIGHT = 500, 500
-GRID_SIZE = 10
-CELL_SIZE = WIDTH // GRID_SIZE
-
-# Set up display
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Pac-Man Grid")
+width = 500
+height = 600
+grid = 10
+cell = width // grid
 
 # Colors
 WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
 GRAY = (200, 200, 200)
-YELLOW = (255, 255, 0)  # Character color
+GREEN = (0, 255, 0)  # Trash color
+YELLOW = (255, 255, 0)  # Garbage truck color
+RED = (255, 0, 0)  # House color
+BLUE = (0, 0, 255)  # Button color
+BLACK = (0, 0, 0)  # Text color
 
-# Starting position of the character
-char_x, char_y = 0, 0  # Top-left corner of the grid
+class Map:
+    def __init__(self, x, y, size):
+        self.x = x
+        self.y = y
+        self.rect = pygame.Rect(x*size, y*size, size, size)
+    def draw(self, screen, color, border=1):
+        pygame.draw.rect(screen, color, self.rect, border)
 
-# Game loop
-while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
+class House:
+    def __init__(self, x, y, size):
+        self.x = x
+        self.y = y
+        self.rect = pygame.Rect(x*size, y*size, size, size)
+    def draw(self, screen, color, border=1):
+        pygame.draw.rect(screen, color, self.rect, border)
 
-        # Move the character based on arrow key presses
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP and char_y > 0:  # Move up
-                char_y -= 1
-            if event.key == pygame.K_DOWN and char_y < GRID_SIZE - 1:  # Move down
-                char_y += 1
-            if event.key == pygame.K_LEFT and char_x > 0:  # Move left
-                char_x -= 1
-            if event.key == pygame.K_RIGHT and char_x < GRID_SIZE - 1:  # Move right
-                char_x += 1
+class Trash:
+    def __init__(self, x, y, size):
+        self.x = x
+        self.y = y
+        self.rect = pygame.Rect(x*size+size//4, y*size+size//4, size//2, size//2)
+    def draw(self, screen, color, border=1):
+        pygame.draw.rect(screen, color, self.rect, border)
 
-    # Fill screen with white
-    screen.fill(WHITE)
+class Truck:
+    def __init__(self, x, y, size):
+        self.x = x
+        self.y = y
+        self.rect = pygame.Rect(x*size, y*size, size, size)
+    def draw(self, screen, color, border=1):
+        pygame.draw.rect(screen, color, self.rect, border)
 
-    # Draw grid
-    for row in range(GRID_SIZE):
-        for col in range(GRID_SIZE):
-            rect = pygame.Rect(col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE)
-            pygame.draw.rect(screen, GRAY, rect, 1)
+class Button:
+    def __init__(self, x, y, width= 150, height=40, text="",font=None, font_size=30):
+        self.rect = pygame.Rect(x, y, width, height)
+        self.text = text
+        self.font = pygame.font.Font(font, font_size)
+    def draw(self, screen, color, text_color):
+        pygame.draw.rect(screen, color, self.rect)
+        text_surface = self.font.render(self.text, True, text_color)
+        screen.blit(text_surface, (self.rect.x + (self.rect.width - text_surface.get_width()) // 2,
+                                    self.rect.y + (self.rect.height - text_surface.get_height()) // 2))
+    def is_clicked(self, mouse_pos):
+        return self.rect.collidepoint(mouse_pos)
 
-    # Draw the character
-    character = pygame.Rect(char_x * CELL_SIZE, char_y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
-    pygame.draw.rect(screen, YELLOW, character)
-
-    # Update display
-    pygame.display.flip()

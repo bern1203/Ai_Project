@@ -134,12 +134,12 @@ while True:
     # "New Game" button
     pygame.draw.rect(screen, BLUE, (50, HEIGHT - 80, 150, 40))
     font = pygame.font.Font(None, 30)
-    new_game_text = font.render("New Game", True, BLACK)
+    new_game_text = font.render("New Game", True, WHITE)
     screen.blit(new_game_text, (75, HEIGHT - 70))
 
     # "Play Again" button
     pygame.draw.rect(screen, BLUE, (300, HEIGHT - 80, 150, 40))
-    play_again_text = font.render("Play Again", True, BLACK)
+    play_again_text = font.render("Play Again", True, WHITE)
     screen.blit(play_again_text, (325, HEIGHT - 70))
 
     # Display the score
