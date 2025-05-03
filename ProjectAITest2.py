@@ -28,8 +28,6 @@ pygame.display.set_caption("Neighborhood Cleanup")
 # Colors
 WHITE = (255, 255, 255)
 GRAY = (200, 200, 200)
-GREEN = (0, 255, 0)  # Trash color
-YELLOW = (255, 255, 0)  # Garbage truck color
 RED = (255, 0, 0)  # House color
 BLUE = (0, 0, 255)  # Button color
 BLACK = (0, 0, 0)  # Text color
@@ -47,6 +45,9 @@ def rotate_truck(direction):
         return pygame.transform.rotate(truck_image, 180)
     return truck_image  # "RIGHT" or default, no rotation needed
 
+# Load trash image and resize it
+trash_image = pygame.image.load("trashcan.png")
+trash_image = pygame.transform.scale(trash_image, (CELL_SIZE, CELL_SIZE))
 
 # Function to reset the game for the same map
 def reset_game():
@@ -140,9 +141,8 @@ while True:
 
     # Draw trash
     for tx, ty in trash_positions:
-        trash = pygame.Rect(tx * CELL_SIZE + CELL_SIZE // 4, ty * CELL_SIZE + CELL_SIZE // 4,
-                            CELL_SIZE // 2, CELL_SIZE // 2)
-        pygame.draw.rect(screen, GREEN, trash)
+        trash = trash_image.get_rect(topleft=(tx * CELL_SIZE, ty * CELL_SIZE))
+        screen.blit(trash_image, trash.topleft)
 
     # Draw houses
     for hx, hy in house_positions:
