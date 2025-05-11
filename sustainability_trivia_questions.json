@@ -1,0 +1,308 @@
+{
+    "beginner": [
+        {
+            "question": "Which of these is a renewable energy source?",
+            "correct": "Solar power",
+            "options": [
+                "Coal",
+                "Solar power",
+                "Natural gas",
+                "Diesel"
+            ]
+        },
+        {
+            "question": "Which term refers to materials that can be broken down naturally?",
+            "correct": "Biodegradable",
+            "options": [
+                "Plastic",
+                "Metal",
+                "Biodegradable",
+                "Styrofoam"
+            ]
+        },
+        {
+            "question": "What kind of lighting is most energy efficient?",
+            "correct": "LED lighting",
+            "options": [
+                "Incandescent bulbs",
+                "Halogen lights",
+                "LED lighting",
+                "Fluorescent bulbs"
+            ]
+        },
+        {
+            "question": "Which of these helps reduce landfill waste?",
+            "correct": "Composting",
+            "options": [
+                "Composting",
+                "Throwing in trash",
+                "Burning waste",
+                "Flushing food"
+            ]
+        },
+        {
+            "question": "What is a simple way to reduce carbon emissions during travel?",
+            "correct": "Carpooling",
+            "options": [
+                "Driving solo",
+                "Flying frequently",
+                "Carpooling",
+                "Using taxis"
+            ]
+        },
+        {
+            "question": "Which of these materials is commonly recyclable?",
+            "correct": "Aluminum cans",
+            "options": [
+                "Food waste",
+                "Aluminum cans",
+                "Used tissues",
+                "Ceramic plates"
+            ]
+        },
+        {
+            "question": "Which of the following is eco-friendly transportation?",
+            "correct": "Bicycling",
+            "options": [
+                "Bicycling",
+                "Gas-powered motorcycle",
+                "Private jet",
+                "SUV"
+            ]
+        },
+        {
+            "question": "What kind of power comes from moving water?",
+            "correct": "Hydropower",
+            "options": [
+                "Wind",
+                "Geothermal",
+                "Hydropower",
+                "Solar"
+            ]
+        },
+        {
+            "question": "What is the term for using materials again instead of discarding them?",
+            "correct": "Reusing",
+            "options": [
+                "Littering",
+                "Reusing",
+                "Wasting",
+                "Dumping"
+            ]
+        },
+        {
+            "question": "Which of these is NOT a renewable energy source?",
+            "correct": "Oil",
+            "options": [
+                "Wind",
+                "Oil",
+                "Geothermal",
+                "Solar"
+            ]
+        }
+    ],
+    "intermediate": [
+        {
+            "question": "Which practice reduces the need for synthetic fertilizers and pesticides?",
+            "correct": "Organic farming",
+            "options": [
+                "Organic farming",
+                "Industrial agriculture",
+                "Monocropping",
+                "Fast fashion"
+            ]
+        },
+        {
+            "question": "Which term describes the total greenhouse gases emitted by an activity?",
+            "correct": "Carbon footprint",
+            "options": [
+                "Carbon footprint",
+                "Air quality",
+                "Deforestation",
+                "Recyclable"
+            ]
+        },
+        {
+            "question": "What is the goal of a zero waste lifestyle?",
+            "correct": "Reduce all waste sent to landfills",
+            "options": [
+                "Create cleaner landfills",
+                "Reduce all waste sent to landfills",
+                "Compost everything",
+                "Eliminate recycling"
+            ]
+        },
+        {
+            "question": "Which of these is a feature of a sustainable city?",
+            "correct": "Green architecture",
+            "options": [
+                "High car usage",
+                "Poor air quality",
+                "Green architecture",
+                "Overcrowding"
+            ]
+        },
+        {
+            "question": "Which farming technique focuses on restoring soil and biodiversity?",
+            "correct": "Regenerative farming",
+            "options": [
+                "Industrial farming",
+                "Regenerative farming",
+                "Pesticide farming",
+                "Fast farming"
+            ]
+        },
+        {
+            "question": "What kind of economy aims to eliminate waste and keep resources in use?",
+            "correct": "Circular economy",
+            "options": [
+                "Linear economy",
+                "Circular economy",
+                "Traditional economy",
+                "Consumption economy"
+            ]
+        },
+        {
+            "question": "What technology uses real-time data to manage energy use efficiently?",
+            "correct": "Smart grid",
+            "options": [
+                "Analog grid",
+                "Smart grid",
+                "Coal network",
+                "Fossil grid"
+            ]
+        },
+        {
+            "question": "Which of these supports water conservation?",
+            "correct": "Rainwater harvesting",
+            "options": [
+                "Rainwater harvesting",
+                "Over-irrigation",
+                "Desalination",
+                "Water pollution"
+            ]
+        },
+        {
+            "question": "What does eco-tourism promote?",
+            "correct": "Environmentally responsible travel",
+            "options": [
+                "Frequent travel",
+                "Mass tourism",
+                "Environmentally responsible travel",
+                "Cruise vacations"
+            ]
+        },
+        {
+            "question": "What kind of design uses natural elements to heat and cool buildings?",
+            "correct": "Passive design",
+            "options": [
+                "Active cooling",
+                "Gas heating",
+                "Passive design",
+                "Industrial HVAC"
+            ]
+        }
+    ],
+    "advanced": [
+        {
+            "question": "Which international treaty aims to limit global warming?",
+            "correct": "Paris Agreement",
+            "options": [
+                "Kyoto Protocol",
+                "Paris Agreement",
+                "Green Act",
+                "Earth Charter"
+            ]
+        },
+        {
+            "question": "What is the goal of net-zero emissions?",
+            "correct": "Balance emitted and removed carbon",
+            "options": [
+                "Stop using all power",
+                "Emit as much carbon as possible",
+                "Balance emitted and removed carbon",
+                "Ignore carbon measurements"
+            ]
+        },
+        {
+            "question": "Which of these is a market-based strategy to reduce carbon emissions?",
+            "correct": "Carbon tax",
+            "options": [
+                "Carbon storage",
+                "Carbon tax",
+                "Plastic ban",
+                "Reforestation"
+            ]
+        },
+        {
+            "question": "Which financial tool supports environmental projects?",
+            "correct": "Green bonds",
+            "options": [
+                "Credit cards",
+                "Oil stocks",
+                "Green bonds",
+                "Bitcoin"
+            ]
+        },
+        {
+            "question": "What describes the capacity to recover from climate impacts?",
+            "correct": "Climate resilience",
+            "options": [
+                "Carbon neutrality",
+                "Climate resilience",
+                "Sustainable farming",
+                "Pollution tolerance"
+            ]
+        },
+        {
+            "question": "Which concept ensures fair treatment in environmental policies?",
+            "correct": "Environmental justice",
+            "options": [
+                "Environmental justice",
+                "Eco-tourism",
+                "Greenwashing",
+                "Minimalism"
+            ]
+        },
+        {
+            "question": "What is a deceptive marketing tactic pretending to be eco-friendly?",
+            "correct": "Greenwashing",
+            "options": [
+                "Conscious consumerism",
+                "Greenwashing",
+                "Eco-labeling",
+                "Fair trade"
+            ]
+        },
+        {
+            "question": "What movement encourages investing away from oil and gas?",
+            "correct": "Fossil fuel divestment",
+            "options": [
+                "Sustainable forestry",
+                "Eco-consciousness",
+                "Fossil fuel divestment",
+                "Reforestation"
+            ]
+        },
+        {
+            "question": "Which of the following supports ethical labor in supply chains?",
+            "correct": "Fair trade",
+            "options": [
+                "Green jobs",
+                "Fast fashion",
+                "Fair trade",
+                "Overconsumption"
+            ]
+        },
+        {
+            "question": "What type of packaging reduces environmental impact?",
+            "correct": "Sustainable packaging",
+            "options": [
+                "Plastic wrap",
+                "Single-use",
+                "Sustainable packaging",
+                "Polystyrene"
+            ]
+        }
+    ]
+}
