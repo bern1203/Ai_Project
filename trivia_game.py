@@ -14,7 +14,7 @@ class TriviaGame:
         self.root.geometry("550x420")
         self.running = False
         self.time_mode = False  # Default: Normal Mode
-        self.total_time = 60
+        self.total_time = 30
         self.score = 0
         self.create_mode_select_screen()
 
@@ -24,7 +24,7 @@ class TriviaGame:
         tk.Label(self.root, text="Choose Game Mode", font=("Helvetica", 14)).pack(pady=10)
         tk.Button(self.root, text="Normal Mode (No Timer)", font=("Helvetica", 14),
                   command=lambda: self.select_difficulty(False)).pack(pady=10)
-        tk.Button(self.root, text="Time Challenge Mode (60 sec)", font=("Helvetica", 14),
+        tk.Button(self.root, text="Time Challenge Mode (30 sec)", font=("Helvetica", 14),
                   command=lambda: self.select_difficulty(True)).pack(pady=10)
 
     def select_difficulty(self, time_mode):

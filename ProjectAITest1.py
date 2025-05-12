@@ -32,13 +32,10 @@ house_positions = [(3,0), (4,0), (5,0), (6,0),
 trash_positions = [(random.randint(0, grid - 1), random.randint(0, grid - 1)) for _ in range(15)]
 original_trash_positions = trash_positions.copy()  # Save the original trash layout for resetting
 
-class Map:
-    def __init__(self, x, y, size):
-        self.x = x
-        self.y = y
-        self.rect = pygame.Rect(x*size, y*size, size, size)
-    def draw(self, screen, color, border=1):
-        pygame.draw.rect(screen, color, self.rect, border)
+def draw_grid(screen, grid_size, cell_size):
+    for row in range(grid_size):
+        for col in range(grid_size):
+            pygame.draw.rect(screen, GRAY, pygame.Rect(col * cell_size, row * cell_size, cell_size, cell_size), 1)
 
 class House:
     def __init__(self, x, y, size):
@@ -84,10 +81,26 @@ def main():
     # Set up display
     screen = pygame.display.set_mode((width, height))
     pygame.display.set_caption("Garbage Truck Game")
-    # # Set up map
-    # map = Map(x, y, cell)
-    # for m in map:
-    #     m.draw(screen, GRAY)
+    draw_grid(screen, grid, cell)
+
+    # Set up houses
+    houses = [House(x, y, cell) for x in range(grid) for y in range(grid) if (x, y) in house_positions]
+    for h in houses:
+        h.draw(screen, RED, 0)
+    # Set up trash
+    trash = [Trash(x, y, cell) for x in range(grid) for y in range(grid) if (x, y) in trash_positions]
+    for t in trash:
+        t.draw(screen, GREEN, 0)
+    # Set up truck
+    truck = Truck(truck_x, truck_y, cell)
+    truck.draw(screen, YELLOW, 0)
+    # Set up buttons
+    new_game_button = Button(50, height - 80, text="New Game")
+    new_game_button.draw(screen, BLUE, BLACK)
+    play_again_button = Button(300, height - 80, text="Play Again")
+    play_again_button.draw(screen, BLUE, BLACK)
+
+
     running = True
     while running:
         for event in pygame.event.get():
@@ -101,21 +114,9 @@ def main():
         pygame.display.flip()
 
 
-
-    # # Set up houses
-    # houses = [House(x, y, cell) for x in range(grid) for y in range(grid) if (x, y) in house_positions]
-    # # Set up trash
-    # trash = [Trash(x, y, cell) for x in range(grid) for y in range(grid) if (x, y) in trash_positions]
-    # # Set up truck
-    # truck = Truck(truck_x, truck_y, cell)
-    # # Set up buttons
-    # new_game_button = Button(50, height - 80, text="New Game")
-    # play_again_button = Button(300, height - 80, text="Play Again")
-
-
     # Quit pygame
-    pygame.quit()
-    sys.exit()
+    # pygame.quit()
+    # sys.exit()
 
 if __name__ == "__main__":
     main()
