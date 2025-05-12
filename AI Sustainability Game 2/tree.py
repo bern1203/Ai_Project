@@ -118,6 +118,7 @@ class PlantTree:
 
     def evaluate_state(self):
         """Evaluate the current game state for the AI player (player 2)"""
+        """AI code"""
         score = self.p2_score - self.p1_score
         
         if self.drop_positions:
@@ -132,6 +133,7 @@ class PlantTree:
     
     def minimax(self, depth, alpha, beta, maximizing_player, start_time, time_limit=1.0):
         """Minimax algorithm with alpha-beta pruning"""
+        """AI code"""
         # Check if we've reached max depth or game is over
         if depth == 0 or not self.drop_positions or time.time() - start_time > time_limit:
             return self.evaluate_state(), None
