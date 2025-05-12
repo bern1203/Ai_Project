@@ -11,15 +11,15 @@ class PlantTree:
         pygame.init()
 
         # Set screen dimensions and layout
-        self.WIDTH, self.HEIGHT = 600, 800  # Extra height for the button area
+        self.WIDTH, self.HEIGHT = 600, 800 
         self.GRID_SIZE = 10
         self.CELL_SIZE =  self.WIDTH // self.GRID_SIZE
 
         # Colors
         self.WHITE = (255, 255, 255)
         self.GRAY = (200, 200, 200)
-        self.BLUE = (0, 0, 255)  # Button color
-        self.BLACK = (0, 0, 0)  # Text 
+        self.BLUE = (0, 0, 255)  
+        self.BLACK = (0, 0, 0)  
         self.GREEN = (0, 255, 0)
         self.RED = (255, 0, 0)
 
@@ -39,8 +39,9 @@ class PlantTree:
         self.planted_positions = []
         self.house_positions = []
         self.original_drop_positions = []
-        self.game_mode = "Human_vs_Human"  # Options: "human_vs_human", "human_vs_ai", "ai_vs_ai"
-        self.current_level = "medium"
+        self.game_mode = "Human_vs_Human"  #default mode
+        self.current_level = "medium" # default  ai difficulty
+
         # Load images
         self.load_images()
         self.new_game()  # Initialize game state
@@ -51,7 +52,7 @@ class PlantTree:
         self.player_img = pygame.transform.flip(self.player2_img, True, False)
         self.plant_img = pygame.image.load("plant.png")
         self.plant_img = pygame.transform.scale(self.plant_img, (self.CELL_SIZE, self.CELL_SIZE))
-        self.house_img = pygame.image.load("building.png")
+        self.house_img = pygame.image.load("house.png")
         self.house_img = pygame.transform.scale(self.house_img, (self.CELL_SIZE, self.CELL_SIZE))
 
 
@@ -67,6 +68,7 @@ class PlantTree:
         self.planted_positions = []
 
     def new_game(self):
+        """Start a new game"""
         # Fixed house positions
         self.house_positions = [
             (3,0), (4,0), (5,0), (6,0),
@@ -116,10 +118,8 @@ class PlantTree:
 
     def evaluate_state(self):
         """Evaluate the current game state for the AI player (player 2)"""
-        # Base score is just the difference in scores
         score = self.p2_score - self.p1_score
         
-        # Add incentives for being closer to remaining drop positions
         if self.drop_positions:
             # Calculate closest distance to a drop position for each player
             min_dist_p1 = min([abs(self.p1_x - x) + abs(self.p1_y - y) for (x, y) in self.drop_positions], default=0)
@@ -143,7 +143,7 @@ class PlantTree:
         
         best_move = None
         
-        if maximizing_player:  # AI's turn (player 2)
+        if maximizing_player:  # player AI
             max_eval = -math.inf
             for move in valid_moves:
                 # Save current state
@@ -180,7 +180,7 @@ class PlantTree:
                     
             return max_eval, best_move
         
-        else:  # Opponent's turn (player 1)
+        else:  # Human player
             min_eval = math.inf
             for move in valid_moves:
                 # Save current state
@@ -234,13 +234,14 @@ class PlantTree:
         start_time = time.time()
         _, best_move = self.minimax(depth, -math.inf, math.inf, True, start_time)
 
+        # get valid moves
         valid_moves = self.get_valid_moves(self.currentP)
         if valid_moves:
             move = random.choice(valid_moves)
             if self.currentP == 1:
                 self.p1_x, self.p1_y = move
             else:
-                self.p2_x, self.p2_y = best_move
+                self.p2_x, self.p2_y = best_move # if not player 1 use minimax move
                
             
             # Check for planting
@@ -253,10 +254,11 @@ class PlantTree:
                 self.planted_positions.append(best_move)    
                 self.p2_score += 5
             
-            self.currentP = 3 - self.currentP  # Switch player (1->2 or 2->1)
+            self.currentP = 3 - self.currentP  # Switch players
         
 
     def end_game(self):
+        """ Check if the game is over """
         if len(self.drop_positions) == 0 and not self.game_over:
             self.game_over = True
             if self.p1_score > self.p2_score:
@@ -268,6 +270,7 @@ class PlantTree:
 
 
     def run(self):
+        """Run the game"""
         clock = pygame.time.Clock()
         ai_move_delay = 500  # milliseconds between AI moves
         last_ai_move_time = 0
@@ -277,7 +280,7 @@ class PlantTree:
             
             self.end_game()
 
-            # Handle AI moves if it's their turn
+            # Handle AI moves 
             if not self.game_over and (
                 (self.game_mode == "Human_vs_AI" and self.currentP == 2) or 
                 (self.game_mode == "AI_vs_AI")
@@ -291,7 +294,7 @@ class PlantTree:
                     pygame.quit()
                     sys.exit()
 
-                # Handle player moves in human modes
+                # Handle human moves
                 if not self.game_over and (
                     (self.game_mode == "Human_vs_Human") or
                     (self.game_mode == "Human_vs_AI" and self.currentP == 1)
@@ -319,7 +322,7 @@ class PlantTree:
                                 self.planted_positions.append((self.p1_x, self.p1_y))
                                 self.p1_score += 5
 
-                    # Move player 2 with WASD keys (in human_vs_human mode)
+                    # Move player 2 with WASD keys 
                     if event.type == pygame.KEYDOWN and self.currentP == 2 and self.game_mode == "Human_vs_Human":
                         new_x, new_y = self.p2_x, self.p2_y
                         if event.key == pygame.K_w and self.p2_y > 0:
@@ -370,9 +373,10 @@ class PlantTree:
                         self.current_level= "hard"
 
             self.display()
-            clock.tick(60) # customise reaction time of AI 
+            clock.tick(60) 
 
     def display(self):
+        """Display the grid-environment"""
         # Fill screen with white
         self.screen.fill(self.WHITE)
 
