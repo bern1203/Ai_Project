@@ -26,6 +26,19 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
 font = pygame.font.SysFont(None, 24)
 
+player_image = pygame.image.load("truck.png")#.convert_alpha()
+player_image = pygame.transform.scale(player_image, (TILE_SIZE + 30, TILE_SIZE))
+player_direction = 180  # 0 = Up, 90 = Left, 180 = Down, -90 = Right
+
+trash_image = pygame.image.load("trashcan.png")#.convert_alpha()
+trash_image = pygame.transform.scale(trash_image, (TILE_SIZE, TILE_SIZE))
+
+house_image = pygame.image.load("house.png")#.convert_alpha()
+house_image = pygame.transform.scale(house_image, (TILE_SIZE, TILE_SIZE))
+
+dumpster_image = pygame.image.load("Dumpster.webp")#.convert_alpha()
+dumpster_image = pygame.transform.scale(dumpster_image, (TILE_SIZE, TILE_SIZE))
+
 # Initialize game state
 
 def generate_obstacle_clusters():
@@ -35,9 +48,13 @@ def generate_obstacle_clusters():
         (1, 7), (4, 7), (7, 7)
     ]
     positions = set()
-    for base_x, base_y in clusters:
+
+    num_to_expand = random.randint(5, 9)
+    expanded_indices = set(random.sample(range(len(clusters)), num_to_expand))
+
+    for idx, (base_x, base_y) in enumerate(clusters):
         width, height = 2, 2
-        if random.random() < 0.25:
+        if idx in expanded_indices:
             if random.choice([True, False]):
                 if base_x + 2 < GRID_SIZE:
                     width = 3
@@ -53,11 +70,13 @@ def generate_obstacle_clusters():
 
 def generate_trash_positions(obstacles):
     positions = set()
-    for x in range(GRID_SIZE):
-        for y in range(GRID_SIZE):
-            if (x, y) not in obstacles and (x, y) != (0, 0) and (x, y) != (GRID_SIZE-1, GRID_SIZE-1):
-                if random.random() < 0.1:
-                    positions.add((x, y))
+    num_trash = random.randint(5, 10)
+    attempts = 0
+    while len(positions) < num_trash and attempts < 100:
+        x, y = random.randint(0, GRID_SIZE-1), random.randint(0, GRID_SIZE-1)
+        if (x, y) not in obstacles and (x, y) != (0, 0) and (x, y) != (GRID_SIZE-1, GRID_SIZE-1):
+            positions.add((x, y))
+        attempts += 1
     return positions
 
 def reset_game(new_map=False):
@@ -65,7 +84,7 @@ def reset_game(new_map=False):
     global fuel, trash_collected, ai_path, show_end_screen, last_ai_step_time
     global computer_play, ai_mode
 
-    player_pos = [0, 0]
+    player_pos = [GRID_SIZE - 1, 0]  # Start at top-right
     if new_map:
         obstacle_positions = generate_obstacle_clusters()
         trash_positions = generate_trash_positions(obstacle_positions)
@@ -80,12 +99,11 @@ def reset_game(new_map=False):
     computer_play = False
     ai_mode = "astar"
 
-# Initial state
-player_pos = [0, 0]
+player_pos = [GRID_SIZE - 1, 0]  # Start at top-right corner
 obstacle_positions = generate_obstacle_clusters()
 trash_positions = generate_trash_positions(obstacle_positions)
 original_trash_positions = set(trash_positions)
-dumpster_pos = (GRID_SIZE - 1, GRID_SIZE - 1)
+dumpster_pos = (GRID_SIZE - 1, 0)  # Dumpster also at top-right corner
 fuel = FUEL_START
 trash_collected = 0
 computer_play = False
@@ -94,12 +112,11 @@ last_ai_step_time = 0
 show_end_screen = False
 ai_mode = "astar"
 
-# Button setup
 button_rects = {
     "Play Again": pygame.Rect(WIDTH - 180, 100, 160, 40),
     "New Game": pygame.Rect(WIDTH - 180, 160, 160, 40),
-    "Toggle A* AI": pygame.Rect(WIDTH - 180, 220, 160, 40),
-    "Greedy AI": pygame.Rect(WIDTH - 180, 280, 160, 40)
+    "A* AI": pygame.Rect(WIDTH - 180, 220, 160, 40),
+    "Random AI": pygame.Rect(WIDTH - 180, 280, 160, 40)
 }
 
 def draw_grid():
@@ -110,16 +127,23 @@ def draw_grid():
 
 def draw_entities():
     for ox, oy in obstacle_positions:
-        pygame.draw.rect(screen, GRAY, (ox*TILE_SIZE, oy*TILE_SIZE, TILE_SIZE, TILE_SIZE))
+        house = house_image.get_rect(topleft=(ox * TILE_SIZE, oy * TILE_SIZE))
+        screen.blit(house_image, house.topleft)
     for tx, ty in trash_positions:
-        pygame.draw.circle(screen, GREEN, (tx*TILE_SIZE + TILE_SIZE//2, ty*TILE_SIZE + TILE_SIZE//2), TILE_SIZE//4)
+        trash = trash_image.get_rect(topleft=(tx * TILE_SIZE, ty * TILE_SIZE))
+        screen.blit(trash_image, trash.topleft)
+
     dx, dy = dumpster_pos
-    pygame.draw.rect(screen, BLUE, (dx*TILE_SIZE, dy*TILE_SIZE, TILE_SIZE, TILE_SIZE))
+    dumpster = dumpster_image.get_rect(topleft=(dx * TILE_SIZE, dy * TILE_SIZE))
+    screen.blit(dumpster_image, dumpster.topleft)
+
+    rotated_image = pygame.transform.rotate(player_image, player_direction)
     px, py = player_pos
-    pygame.draw.rect(screen, RED, (px*TILE_SIZE, py*TILE_SIZE, TILE_SIZE, TILE_SIZE))
+    rotated_rect = rotated_image.get_rect(center=(px * TILE_SIZE + TILE_SIZE // 2, py * TILE_SIZE + TILE_SIZE // 2))
+    screen.blit(rotated_image, rotated_rect.topleft)
 
 def draw_ui():
-    pygame.draw.rect(screen, LIGHT_GRAY, (GRID_SIZE*TILE_SIZE, 0, 200, HEIGHT))
+    pygame.draw.rect(screen, WHITE, (GRID_SIZE*TILE_SIZE, 0, 200, HEIGHT))
     if show_end_screen:
         msg = font.render(f"Victory! Score: {fuel + trash_collected}", True, BLACK)
         screen.blit(msg, (WIDTH - 180, 20))
@@ -133,11 +157,8 @@ def draw_ui():
         pygame.draw.rect(screen, BLACK, rect, 2)
         screen.blit(font.render(label, True, BLACK), (rect.x + 10, rect.y + 10))
 
-def is_victory():
-    return tuple(player_pos) == dumpster_pos and not trash_positions
-
 def move_player(dx, dy):
-    global fuel, trash_collected
+    global fuel, trash_collected, player_direction
     if fuel <= 0:
         return
     nx, ny = player_pos[0] + dx, player_pos[1] + dy
@@ -148,73 +169,96 @@ def move_player(dx, dy):
             trash_positions.remove((nx, ny))
             trash_collected += 1
 
-def heuristic(a, b):
-    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+        if dx == 1:
+            player_direction = 0
+        elif dx == -1:
+            player_direction = 180
+        elif dy == 1:
+            player_direction = -90
+        elif dy == -1:
+            player_direction = 90
 
-def get_neighbors(pos):
+def goal_state():
+    return tuple(player_pos) == dumpster_pos and not trash_positions
+
+def heuristic(current, remaining_trash):
+    if remaining_trash:
+        return min(abs(current[0] - tx) + abs(current[1] - ty) for tx, ty in remaining_trash)
+    else:
+        return abs(current[0] - dumpster_pos[0]) + abs(current[1] - dumpster_pos[1])
+
+def successors(pos):
     x, y = pos
     for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
         nx, ny = x + dx, y + dy
         if 0 <= nx < GRID_SIZE and 0 <= ny < GRID_SIZE and (nx, ny) not in obstacle_positions:
             yield (nx, ny)
 
-def a_star(start, goal):
-    open_set = [(0 + heuristic(start, goal), 0, start, [])]
+# A* Algorithm
+def astar_search(start, remaining_trash):
+    frontier = [(0, 0, start, [], frozenset(remaining_trash))]
     visited = set()
-    while open_set:
-        est_total, cost, current, path = heapq.heappop(open_set)
-        if current in visited:
+
+    while frontier:
+        priority, cost, current_pos, path, remaining = heapq.heappop(frontier)
+
+        if (current_pos, remaining) in visited:
             continue
-        visited.add(current)
-        if current == goal:
-            return path + [current]
-        for neighbor in get_neighbors(current):
-            heapq.heappush(open_set, (cost + 1 + heuristic(neighbor, goal), cost + 1, neighbor, path + [current]))
+        visited.add((current_pos, remaining))
+
+        new_path = path + [current_pos]
+        new_remaining = set(remaining)
+        if current_pos in new_remaining:
+            new_remaining.remove(current_pos)
+
+        if not new_remaining and current_pos == dumpster_pos:
+            return new_path
+
+        for neighbor in successors(current_pos):
+            h = heuristic(neighbor, new_remaining)
+            g = cost + 1
+            f = g + h
+            heapq.heappush(frontier, (f, g, neighbor, new_path, frozenset(new_remaining)))
+
     return []
 
-def greedy_search(start, goal):
-    open_set = [(heuristic(start, goal), start, [])]
+# Greedy Algorithm
+def greedy_search(start, remaining_trash):
+    frontier = [(0, start, [], frozenset(remaining_trash))]
     visited = set()
-    while open_set:
-        h, current, path = heapq.heappop(open_set)
-        if current in visited:
+
+    while frontier:
+        _, current_pos, path, remaining = heapq.heappop(frontier)
+
+        if (current_pos, remaining) in visited:
             continue
-        visited.add(current)
-        if current == goal:
-            return path + [current]
-        for neighbor in get_neighbors(current):
-            heapq.heappush(open_set, (heuristic(neighbor, goal), neighbor, path + [current]))
+        visited.add((current_pos, remaining))
+
+        new_path = path + [current_pos]
+        new_remaining = set(remaining)
+        if current_pos in new_remaining:
+            new_remaining.remove(current_pos)
+
+        if not new_remaining and current_pos == dumpster_pos:
+            return new_path
+
+        for neighbor in successors(current_pos):
+            h = heuristic(neighbor, new_remaining)
+            heapq.heappush(frontier, (h, neighbor, new_path, frozenset(new_remaining)))
+
     return []
 
-def compute_full_ai_path():
-    waypoints = list(trash_positions)
-    best_path = []
-    best_cost = float('inf')
-    for perm in itertools.permutations(waypoints):
-        path = []
-        cost = 0
-        current = tuple(player_pos)
-        for point in perm:
-            segment = a_star(current, point) if ai_mode == "astar" else greedy_search(current, point)
-            if not segment:
-                break
-            cost += len(segment)
-            path += segment[1:]
-            current = point
-        final_segment = a_star(current, dumpster_pos) if ai_mode == "astar" else greedy_search(current, dumpster_pos)
-        if final_segment:
-            cost += len(final_segment)
-            path += final_segment[1:]
-            if cost < best_cost:
-                best_cost = cost
-                best_path = path
-    return best_path
+def compute_ai_path():
+    if ai_mode == "astar":
+        return astar_search(tuple(player_pos), trash_positions)
+    elif ai_mode == "greedy/random":
+        return greedy_search(tuple(player_pos), trash_positions)
+    return []
 
-# Main loop
 running = True
 while running:
     clock.tick(FPS)
-    screen.fill(WHITE)
+    screen.fill(LIGHT_GRAY)
     draw_grid()
     draw_entities()
     draw_ui()
@@ -236,21 +280,21 @@ while running:
             elif event.key == pygame.K_c:
                 computer_play = not computer_play
                 if computer_play:
-                    ai_path = compute_full_ai_path()
+                    ai_path = compute_ai_path()
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mx, my = event.pos
             if button_rects["Play Again"].collidepoint(mx, my):
                 reset_game(new_map=False)
             elif button_rects["New Game"].collidepoint(mx, my):
                 reset_game(new_map=True)
-            elif button_rects["Toggle A* AI"].collidepoint(mx, my):
+            elif button_rects["A* AI"].collidepoint(mx, my):
                 ai_mode = "astar"
                 computer_play = True
-                ai_path = compute_full_ai_path()
-            elif button_rects["Greedy AI"].collidepoint(mx, my):
-                ai_mode = "greedy"
+                ai_path = compute_ai_path()
+            elif button_rects["Random AI"].collidepoint(mx, my):
+                ai_mode = "greedy/random"
                 computer_play = True
-                ai_path = compute_full_ai_path()
+                ai_path = compute_ai_path()
 
     if computer_play and ai_path and fuel > 0 and not show_end_screen:
         if current_time - last_ai_step_time >= AI_DELAY:
@@ -259,8 +303,10 @@ while running:
             dy = next_step[1] - player_pos[1]
             move_player(dx, dy)
             last_ai_step_time = current_time
+            if not ai_path:
+                ai_path = compute_ai_path()
 
-    if is_victory() and not show_end_screen:
+    if goal_state() and not show_end_screen:
         show_end_screen = True
 
     pygame.display.flip()
